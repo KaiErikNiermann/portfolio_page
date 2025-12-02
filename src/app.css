@@ -1,0 +1,65 @@
+@import 'tailwindcss';
+
+@import '@skeletonlabs/skeleton'; /* [!code ++] */
+@import '@skeletonlabs/skeleton-svelte'; /* [!code ++] */
+@import '@skeletonlabs/skeleton/themes/cerberus'; /* [!code ++] */
+
+/* @font-face {
+	font-family: 'EulerVM';
+	src: url('/fonts/Euler-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--font-math: 'EulerVM', 'Times New Roman', 'Nimbus Roman No9 L', serif;
+} */
+
+:root.theme-light {
+	--bg-page: #f7f7f5;
+	--bg-header: #ffffff;
+	--bg-sidebar: #fdfbf5;
+	--bg-main: #fbfbfb;
+	--bg-card: #ffffff;
+	--bg-footer: #ffffff;
+	--text-base: #1f2933;
+	--text-strong: #111318;
+	--text-muted: #4b5563;
+	--border-subtle: rgba(15, 23, 42, 0.12);
+	--border-muted: rgba(15, 23, 42, 0.35);
+	--code-bg: #f3f4f6;
+	--code-border: rgba(15, 23, 42, 0.15);
+	--code-text: #0f172a;
+	--code-accent: #1d4ed8;
+	--code-string: #15803d;
+	--code-number: #b45309;
+	--code-comment: #64748b;
+}
+
+:root.theme-dark {
+	--bg-page: #050608;
+	--bg-header: #090b10;
+	--bg-sidebar: #0b0d12;
+	--bg-main: #0e1015;
+	--bg-card: #14161c;
+	--bg-footer: #090b10;
+	--text-base: #e5e7eb;
+	--text-strong: #f4f4f5;
+	--text-muted: #9ca3af;
+	--border-subtle: rgba(156, 163, 175, 0.18);
+	--border-muted: rgba(156, 163, 175, 0.35);
+	--code-bg: #0f1014;
+	--code-border: rgba(156, 163, 175, 0.32);
+	--code-text: #f4f4f5;
+	--code-accent: #a3a3a3;
+	--code-string: #c7d2fe;
+	--code-number: #f5d0fe;
+	--code-comment: #6b7280;
+}
+
+body {
+	transition:
+		background-color 200ms ease,
+		color 200ms ease;
+}
