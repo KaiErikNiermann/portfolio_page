@@ -1,10 +1,18 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import type { PageServerLoad } from './$types';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Import all card files at build time
+const projectFiles = import.meta.glob('/src/lib/cards/projects/*.md', {
+	query: '?raw',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
+
+const experienceFiles = import.meta.glob('/src/lib/cards/experience/*.md', {
+	query: '?raw',
+	import: 'default',
+	eager: true
+}) as Record<string, string>;
 
 export type ProjectCard = {
 	title: string;
@@ -21,29 +29,16 @@ export type ExperienceCard = {
 	tags: string[];
 };
 
-const PROJECTS_DIR = path.resolve(__dirname, '../lib/cards/projects');
-const EXPERIENCE_DIR = path.resolve(__dirname, '../lib/cards/experience');
-
-async function readCardFolder<T>(folderPath: string) {
-	const entries = await fs.readdir(folderPath, { withFileTypes: true });
-	const cards = await Promise.all(
-		entries
-			.filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-			.map(async (entry) => {
-				const file = await fs.readFile(path.join(folderPath, entry.name), 'utf-8');
-				const { data } = matter(file);
-				return data as T;
-			})
-	);
-
-	return cards;
+function readCards<T>(files: Record<string, string>): T[] {
+	return Object.values(files).map((source) => {
+		const { data } = matter(source);
+		return data as T;
+	});
 }
 
 export const load = (async () => {
-	const [projects, experiences] = await Promise.all([
-		readCardFolder<ProjectCard>(PROJECTS_DIR),
-		readCardFolder<ExperienceCard>(EXPERIENCE_DIR)
-	]);
+	const projects = readCards<ProjectCard>(projectFiles);
+	const experiences = readCards<ExperienceCard>(experienceFiles);
 
 	return {
 		projects,

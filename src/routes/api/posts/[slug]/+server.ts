@@ -2,6 +2,8 @@ import { error, json } from '@sveltejs/kit';
 import { getPostDetail } from '$lib/server/posts';
 import type { RequestHandler } from './$types';
 
+export const prerender = false;
+
 export const GET: RequestHandler = async ({ params }) => {
 	const post = await getPostDetail(params.slug);
 	if (!post) {

@@ -1,26 +1,28 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import type { PostDetail, PostMeta } from '$lib/types/post';
 import { cleanInlineMathBoundaries } from '$lib/math/inline-math';
 import { normalizeAlignEnvironmentTags } from '$lib/math/align-tags';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BLOG_DIR = path.resolve(__dirname, '../blog-posts');
+// Import all markdown files at build time
+const postFiles = import.meta.glob('/src/lib/blog-posts/*.md', { 
+	query: '?raw', 
+	import: 'default',
+	eager: true 
+}) as Record<string, string>;
 
 marked.setOptions({
 	gfm: true
 });
 
-async function loadFile(slug: string) {
-	const candidate = path.join(BLOG_DIR, `${slug}.md`);
-	try {
-		return await fs.readFile(candidate, 'utf-8');
-	} catch (error) {
-		return null;
-	}
+function getSlugFromPath(path: string): string {
+	const match = path.match(/\/([^/]+)\.md$/);
+	return match ? match[1] : '';
+}
+
+function loadFile(slug: string): string | null {
+	const path = `/src/lib/blog-posts/${slug}.md`;
+	return postFiles[path] ?? null;
 }
 
 function normalizeMeta(slug: string, fm: Record<string, unknown> = {}): PostMeta {
@@ -40,23 +42,17 @@ function normalizeMeta(slug: string, fm: Record<string, unknown> = {}): PostMeta
 }
 
 export async function listPosts(): Promise<PostMeta[]> {
-	const entries = await fs.readdir(BLOG_DIR, { withFileTypes: true });
-	const posts = await Promise.all(
-		entries
-			.filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-			.map(async (entry) => {
-				const slug = entry.name.replace(/\.md$/, '');
-				const source = await fs.readFile(path.join(BLOG_DIR, entry.name), 'utf-8');
-				const { data } = matter(source);
-				return normalizeMeta(slug, data as Record<string, unknown>);
-			})
-	);
+	const posts = Object.entries(postFiles).map(([path, source]) => {
+		const slug = getSlugFromPath(path);
+		const { data } = matter(source);
+		return normalizeMeta(slug, data as Record<string, unknown>);
+	});
 
 	return posts.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
 }
 
 export async function getPostDetail(slug: string): Promise<PostDetail | null> {
-	const source = await loadFile(slug);
+	const source = loadFile(slug);
 	if (!source) return null;
 
 	const { data, content } = matter(source);

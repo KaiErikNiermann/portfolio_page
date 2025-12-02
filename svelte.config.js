@@ -10,7 +10,17 @@ const config = {
 	kit: {
 		adapter: adapter({
 			runtime: 'nodejs22.x'
-		})
+		}),
+		prerender: {
+			handleHttpError: ({ path, referrer, message }) => {
+				// Ignore missing assets referenced in blog posts
+				if (path.startsWith('/assets/')) {
+					console.warn(`Missing asset: ${path} (referenced from ${referrer})`);
+					return;
+				}
+				throw new Error(message);
+			}
+		}
 	},
 	extensions: ['.svelte', '.svx']
 };
