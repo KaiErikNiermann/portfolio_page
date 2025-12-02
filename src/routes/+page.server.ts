@@ -1,7 +1,10 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import type { PageServerLoad } from './$types';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export type ProjectCard = {
 	title: string;
@@ -18,8 +21,8 @@ export type ExperienceCard = {
 	tags: string[];
 };
 
-const PROJECTS_DIR = path.resolve('src/lib/cards/projects');
-const EXPERIENCE_DIR = path.resolve('src/lib/cards/experience');
+const PROJECTS_DIR = path.resolve(__dirname, '../lib/cards/projects');
+const EXPERIENCE_DIR = path.resolve(__dirname, '../lib/cards/experience');
 
 async function readCardFolder<T>(folderPath: string) {
 	const entries = await fs.readdir(folderPath, { withFileTypes: true });

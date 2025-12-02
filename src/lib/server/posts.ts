@@ -1,12 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import type { PostDetail, PostMeta } from '$lib/types/post';
 import { cleanInlineMathBoundaries } from '$lib/math/inline-math';
 import { normalizeAlignEnvironmentTags } from '$lib/math/align-tags';
 
-const BLOG_DIR = path.resolve('src/lib/blog-posts');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const BLOG_DIR = path.resolve(__dirname, '../blog-posts');
 
 marked.setOptions({
 	gfm: true
