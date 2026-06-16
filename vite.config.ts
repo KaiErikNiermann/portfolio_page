@@ -1,5 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
-import adapter from '@sveltejs/adapter-vercel';
+import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
@@ -13,8 +13,10 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// Deploying to Vercel. See https://svelte.dev/docs/kit/adapter-vercel for options.
-			adapter: adapter({ runtime: 'nodejs22.x' })
+			// Fully static build for GitHub Pages. Served at the root of the custom
+			// domain (apelsauce.me), so no base path is needed.
+			// See https://svelte.dev/docs/kit/adapter-static
+			adapter: adapter()
 		})
 	]
 });
