@@ -12,7 +12,4 @@
 >
 	<img src={trafficCone} alt="" class="h-16 w-16 animate-pulse" />
 	<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Under construction</h1>
-	<p class="max-w-md text-pretty text-neutral-400">
-		Pardon the dust — something new is being built here. Check back soon.
-	</p>
 </main>
